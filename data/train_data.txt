@@ -1,0 +1,3 @@
+./data/train_image1.jpg 515
+./data/train_image1.jpg 515
+./data/train_image1.jpg 515
