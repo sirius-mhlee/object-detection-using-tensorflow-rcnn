@@ -2,15 +2,16 @@ import numpy as np
 import tensorflow as tf
 
 class LinearSVM:
-    def __init__(self, npy_model, trainable):
-        self.npy_model = npy_model
+    def __init__(self, model, trainable):
+        self.model = model
         self.var_dict = {}
         self.trainable = trainable
 
     def build(self, feature_holder, label_holder):
         self.weights, self.svm1 = self.svm_layer(feature_holder, 4096, 1000, 'svm1')
 
-        self.hinge_loss = tf.losses.hinge_loss(label_holder, self.svm1)
+        self.hinge_loss = tf.nn.relu(self.svm1 - label_holder + 1 - tf.reduce_sum(self.svm1 * label_holder, 1, keep_dims=True))
+        self.hinge_loss_sum = tf.reduce_sum(self.hinge_loss, 1)
         self.hinge_loss_mean = tf.reduce_mean(self.hinge_loss)
         self.regularization = 0.5 * tf.reduce_sum(tf.square(self.weights))
         self.loss = self.regularization + 1.0 * self.hinge_loss_mean
@@ -19,11 +20,11 @@ class LinearSVM:
         self.correct_prediction = tf.equal(tf.argmax(self.svm1, 1), tf.argmax(label_holder, 1))
         self.accuracy_mean = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
 
-        self.npy_model = None
+        self.model = None
 
     def get_var(self, initial_value, name, idx, var_name):
-        if self.npy_model is not None and name in self.npy_model:
-            value = self.npy_model[name][idx]
+        if self.model is not None and name in self.model:
+            value = self.model[name][idx]
         else:
             value = initial_value
 

@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow as tf
 
 class BBoxRegression:
-    def __init__(self, npy_model, trainable):
-        self.npy_model = npy_model
+    def __init__(self, model, trainable):
+        self.model = model
         self.var_dict = {}
         self.trainable = trainable
 
@@ -11,16 +11,17 @@ class BBoxRegression:
         self.weights, self.bbox1 = self.bbox_layer(feature_holder, 4096, 4, 'bbox1')
 
         self.regression_loss = tf.square(box_holder - self.bbox1)
-        self.regression_loss_mean = tf.reduce_mean(self.regression_loss)
+        self.regression_sum = tf.reduce_sum(self.regression_loss, 0)
         self.regularization = 1000 * tf.reduce_sum(tf.square(self.weights), 0)
-        self.loss = self.regularization + self.regression_loss_mean
-        self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1).minimize(self.loss)
+        self.loss = self.regularization + self.regression_sum
+        self.loss_mean = tf.reduce_mean(self.loss)
+        self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1).minimize(self.loss_mean)
 
-        self.npy_model = None
+        self.model = None
 
     def get_var(self, initial_value, name, idx, var_name):
-        if self.npy_model is not None and name in self.npy_model:
-            value = self.npy_model[name][idx]
+        if self.model is not None and name in self.model:
+            value = self.model[name][idx]
         else:
             value = initial_value
 

@@ -2,15 +2,15 @@ import numpy as np
 import tensorflow as tf
 
 class AlexNet:
-    def __init__(self, npy_model, npy_mean, trainable):
-        self.npy_model = npy_model
-        self.npy_mean = npy_mean
+    def __init__(self, model, mean, trainable):
+        self.model = model
+        self.mean = mean
         self.var_dict = {}
         self.trainable = trainable
 
     def build(self, img_holder, label_holder):
         b, g, r = tf.split(axis=3, num_or_size_splits=3, value=img_holder)
-        bgr = tf.concat(axis=3, values=[b - self.npy_mean[0], g - self.npy_mean[1], r - self.npy_mean[2]])
+        bgr = tf.concat(axis=3, values=[b - self.mean[0], g - self.mean[1], r - self.mean[2]])
 
         self.conv1 = self.conv_layer(bgr, 3, 96, 11, 4, 'VALID', 'conv1')
         self.norm1 = self.lr_norm(self.conv1, 'norm1')
@@ -48,11 +48,23 @@ class AlexNet:
         self.correct_prediction = tf.equal(tf.argmax(self.fc8, 1), tf.argmax(label_holder, 1))
         self.accuracy_mean = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
 
-        self.npy_model = None
+        self.model = None
+
+    def build_finetune(self, label_holder):
+        self.finetune_fc8 = self.fc_layer(self.relu7, 4096, 1000 + 1, 'finetune_fc8')
+
+        self.finetune_prob = tf.nn.softmax(self.finetune_fc8, name='finetune_prob')
+
+        self.finetune_loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.finetune_fc8, labels=label_holder)
+        self.finetune_loss_mean = tf.reduce_mean(self.finetune_loss)
+        self.finetune_optimizer = tf.train.AdamOptimizer(learning_rate=0.1).minimize(self.finetune_loss_mean)
+
+        self.finetune_correct_prediction = tf.equal(tf.argmax(self.finetune_fc8, 1), tf.argmax(label_holder, 1))
+        self.finetune_accuracy_mean = tf.reduce_mean(tf.cast(self.finetune_correct_prediction, tf.float32))
 
     def get_var(self, initial_value, name, idx, var_name):
-        if self.npy_model is not None and name in self.npy_model:
-            value = self.npy_model[name][idx]
+        if self.model is not None and name in self.model:
+            value = self.model[name][idx]
         else:
             value = initial_value
 
