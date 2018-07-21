@@ -73,14 +73,15 @@ def main():
         # Finetuning AlexNet
         for epoch_idx in range(max_epoch):
             for batch_idx in range(alexnet_finetune_size // batch_size):
+                #region_proposal_image = selectivesearch(finetune_image)
                 batch_image, batch_label = do.get_alexnet_finetune_batch_data(sess, alexnet_finetune_data, batch_size)
-                alexnet_feed_dict = {image:batch_image, label:batch_label}
+                alexnet_feed_dict = {image:batch_image, finetune_label:batch_label}
 
                 _, loss_mean_value = sess.run([alexnet_model.finetune_optimizer, alexnet_model.finetune_loss_mean], feed_dict=alexnet_feed_dict)
                 print_batch_info(epoch_idx, batch_idx, loss_mean_value)
 
             batch_image, batch_label = do.get_alexnet_finetune_batch_data(sess, alexnet_train_data, batch_size)
-            feed_dict = {image:batch_image, label:batch_label}
+            feed_dict = {image:batch_image, finetune_label:batch_label}
 
             accuracy_mean_value = sess.run(alexnet_model.finetune_accuracy_mean, feed_dict=feed_dict)
             print_epoch_info(epoch_idx, accuracy_mean_value)
