@@ -1,6 +1,8 @@
 import numpy as np
 import tensorflow as tf
 
+import Configuration as cfg
+
 class AlexNet:
     def __init__(self, model, mean, trainable):
         self.model = model
@@ -37,13 +39,13 @@ class AlexNet:
         if self.trainable:
             self.relu7 = tf.nn.dropout(self.relu7, 0.5)
 
-        self.fc8 = self.fc_layer(self.relu7, 4096, 1000, 'fc8')
+        self.fc8 = self.fc_layer(self.relu7, 4096, cfg.object_class_num, 'fc8')
 
         self.prob = tf.nn.softmax(self.fc8, name='prob')
 
         self.loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.fc8, labels=label_holder)
         self.loss_mean = tf.reduce_mean(self.loss)
-        self.optimizer = tf.train.AdamOptimizer(learning_rate=0.1).minimize(self.loss_mean)
+        self.optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(self.loss_mean)
 
         self.correct_prediction = tf.equal(tf.argmax(self.fc8, 1), tf.argmax(label_holder, 1))
         self.accuracy_mean = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
@@ -51,13 +53,13 @@ class AlexNet:
         self.model = None
 
     def build_finetune(self, label_holder):
-        self.finetune_fc8 = self.fc_layer(self.relu7, 4096, 1000 + 1, 'finetune_fc8')
+        self.finetune_fc8 = self.fc_layer(self.relu7, 4096, cfg.object_class_num + 1, 'finetune_fc8')
 
         self.finetune_prob = tf.nn.softmax(self.finetune_fc8, name='finetune_prob')
 
         self.finetune_loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.finetune_fc8, labels=label_holder)
         self.finetune_loss_mean = tf.reduce_mean(self.finetune_loss)
-        self.finetune_optimizer = tf.train.AdamOptimizer(learning_rate=0.1).minimize(self.finetune_loss_mean)
+        self.finetune_optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.0001).minimize(self.finetune_loss_mean)
 
         self.finetune_correct_prediction = tf.equal(tf.argmax(self.finetune_fc8, 1), tf.argmax(label_holder, 1))
         self.finetune_accuracy_mean = tf.reduce_mean(tf.cast(self.finetune_correct_prediction, tf.float32))

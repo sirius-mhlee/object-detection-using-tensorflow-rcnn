@@ -6,26 +6,7 @@ import ImageSegmentation as seg
 import RegionOperator as ro
 import SimilarityOperator as so
 
-def generate_image(img, rgset):
-    random_color = lambda: (int(rand.random() * 255), int(rand.random() * 255), int(rand.random() * 255))
-    color = [random_color() for i in range(len(rgset))]
-
-    save_img = img.copy()
-
-    for i in range(len(rgset)):
-        cv2.rectangle(save_img, (rgset[i].rect.left, rgset[i].rect.top), (rgset[i].rect.right, rgset[i].rect.bottom), color[i], 2)
-
-    return save_img
-
-def main():
-    sigma = float(sys.argv[1])
-    k = float(sys.argv[2])
-    min_size = float(sys.argv[3])
-    smallest = int(sys.argv[4])
-    largest = int(sys.argv[5])
-    distortion = float(sys.argv[6])
-    img = cv2.imread(sys.argv[7])
-
+def selective_search_image(sigma, k, min_size, smallest, largest, distortion, img):
     ufset = seg.segment_image(sigma, k, min_size, img)
 
     rgset = ro.extract_region(img, ufset)
@@ -69,8 +50,4 @@ def main():
 
         proposal.append(rg)
 
-    save_img = generate_image(img, proposal)
-    cv2.imwrite(sys.argv[8], save_img)
-
-if __name__ == '__main__':
-    main()
+    return proposal
