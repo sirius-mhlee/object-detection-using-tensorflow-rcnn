@@ -59,7 +59,7 @@ def main():
 
         detect_list = []
         img = cv2.imread(sys.argv[6])
-        proposal = ss.selective_search_image(0.5, 500, 50, 6000, 10000, 1.25, img)
+        proposal = ss.selective_search_image(0.5, 500, 50, 20000, 30000, 1.25, img)
         for region in proposal:
             region_img = do.load_region_image(sys.argv[6], region.rect.left, region.rect.top, region.rect.right, region.rect.bottom)
             

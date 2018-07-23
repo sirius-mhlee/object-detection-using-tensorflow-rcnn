@@ -110,7 +110,7 @@ def load_alexnet_finetune_data(train_data_path):
         ground_truth_label = int(split_line[1])
         ground_truth_bbox = (int(split_line[2]), int(split_line[3]), int(split_line[2]) + int(split_line[4]), int(split_line[3]) + int(split_line[5]))
 
-        proposal = ss.selective_search_image(0.5, 500, 50, 6000, 10000, 1.25, img)
+        proposal = ss.selective_search_image(0.5, 500, 50, 20000, 30000, 1.25, img)
         for region in proposal:
             label = ground_truth_label
             region_bbox = (region.rect.left, region.rect.top, region.rect.right, region.rect.bottom)
@@ -150,7 +150,7 @@ def load_svm_train_data(train_data_path):
         ground_truth_label = int(split_line[1])
         ground_truth_bbox = (int(split_line[2]), int(split_line[3]), int(split_line[2]) + int(split_line[4]), int(split_line[3]) + int(split_line[5]))
 
-        proposal = ss.selective_search_image(0.5, 500, 50, 6000, 10000, 1.25, img)
+        proposal = ss.selective_search_image(0.5, 500, 50, 20000, 30000, 1.25, img)
         for region in proposal:
             label = ground_truth_label
             region_bbox = (region.rect.left, region.rect.top, region.rect.right, region.rect.bottom)
@@ -190,7 +190,7 @@ def load_bbox_train_data(train_data_path):
         ground_truth_label = int(split_line[1])
         ground_truth_bbox = (int(split_line[2]), int(split_line[3]), int(split_line[2]) + int(split_line[4]), int(split_line[3]) + int(split_line[5]))
 
-        proposal = ss.selective_search_image(0.5, 500, 50, 6000, 10000, 1.25, img)
+        proposal = ss.selective_search_image(0.5, 500, 50, 20000, 30000, 1.25, img)
         for region in proposal:
             label = ground_truth_label
             region_bbox = (region.rect.left, region.rect.top, region.rect.right, region.rect.bottom)

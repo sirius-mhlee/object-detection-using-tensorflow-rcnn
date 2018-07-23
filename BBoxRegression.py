@@ -16,7 +16,7 @@ class BBoxRegression:
             self.regularization = 1000 * tf.reduce_sum(tf.square(self.weights), 0)
             self.loss = self.regularization + self.regression_sum
             self.loss_mean = tf.reduce_mean(self.loss)
-            self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001).minimize(self.loss_mean)
+            self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.00025).minimize(self.loss_mean)
 
         self.model = None
 

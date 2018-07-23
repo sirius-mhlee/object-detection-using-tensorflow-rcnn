@@ -46,7 +46,7 @@ class AlexNet:
         if self.trainable:
             self.loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.fc8, labels=label_holder)
             self.loss_mean = tf.reduce_mean(self.loss)
-            self.optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(self.loss_mean)
+            self.optimizer = tf.train.AdamOptimizer(learning_rate=0.0025).minimize(self.loss_mean)
 
             self.correct_prediction = tf.equal(tf.argmax(self.fc8, 1), tf.argmax(label_holder, 1))
             self.accuracy_mean = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
