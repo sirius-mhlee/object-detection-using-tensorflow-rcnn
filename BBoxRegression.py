@@ -7,15 +7,16 @@ class BBoxRegression:
         self.var_dict = {}
         self.trainable = trainable
 
-    def build(self, feature_holder, box_holder):
+    def build(self, feature_holder, box_holder=None):
         self.weights, self.bbox1 = self.bbox_layer(feature_holder, 4096, 4, 'bbox1')
 
-        self.regression_loss = tf.square(box_holder - self.bbox1)
-        self.regression_sum = tf.reduce_sum(self.regression_loss, 0)
-        self.regularization = 1000 * tf.reduce_sum(tf.square(self.weights), 0)
-        self.loss = self.regularization + self.regression_sum
-        self.loss_mean = tf.reduce_mean(self.loss)
-        self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001).minimize(self.loss_mean)
+        if self.trainable:
+            self.regression_loss = tf.square(box_holder - self.bbox1)
+            self.regression_sum = tf.reduce_sum(self.regression_loss, 0)
+            self.regularization = 1000 * tf.reduce_sum(tf.square(self.weights), 0)
+            self.loss = self.regularization + self.regression_sum
+            self.loss_mean = tf.reduce_mean(self.loss)
+            self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001).minimize(self.loss_mean)
 
         self.model = None
 

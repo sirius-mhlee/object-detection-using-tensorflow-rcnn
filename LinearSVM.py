@@ -9,18 +9,19 @@ class LinearSVM:
         self.var_dict = {}
         self.trainable = trainable
 
-    def build(self, feature_holder, label_holder):
+    def build(self, feature_holder, label_holder=None):
         self.weights, self.svm1 = self.svm_layer(feature_holder, 4096, cfg.object_class_num + 1, 'svm1')
 
-        self.hinge_loss = tf.nn.relu(self.svm1 - label_holder + 1 - tf.reduce_sum(self.svm1 * label_holder, 1, keep_dims=True))
-        self.hinge_loss_sum = tf.reduce_sum(self.hinge_loss, 1)
-        self.hinge_loss_mean = tf.reduce_mean(self.hinge_loss)
-        self.regularization = 0.5 * tf.reduce_sum(tf.square(self.weights))
-        self.loss = self.regularization + 1.0 * self.hinge_loss_mean
-        self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001).minimize(self.loss)
+        if self.trainable:
+            self.hinge_loss = tf.nn.relu(self.svm1 - label_holder + 1 - tf.reduce_sum(self.svm1 * label_holder, 1, keep_dims=True))
+            self.hinge_loss_sum = tf.reduce_sum(self.hinge_loss, 1)
+            self.hinge_loss_mean = tf.reduce_mean(self.hinge_loss)
+            self.regularization = 0.5 * tf.reduce_sum(tf.square(self.weights))
+            self.loss = self.regularization + 1.0 * self.hinge_loss_mean
+            self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001).minimize(self.loss)
 
-        self.correct_prediction = tf.equal(tf.argmax(self.svm1, 1), tf.argmax(label_holder, 1))
-        self.accuracy_mean = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
+            self.correct_prediction = tf.equal(tf.argmax(self.svm1, 1), tf.argmax(label_holder, 1))
+            self.accuracy_mean = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
 
         self.model = None
 

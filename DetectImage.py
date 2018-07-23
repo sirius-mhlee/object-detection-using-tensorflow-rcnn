@@ -19,7 +19,7 @@ def generate_image(label_file_path, img, nms_detect_list):
     label_file.close()
 
     random_color = lambda: (int(rand.random() * 255), int(rand.random() * 255), int(rand.random() * 255))
-    color = [random_color() for i in range(len(rgset))]
+    color = [random_color() for i in range(len(nms_detect_list))]
 
     save_img = img.copy()
     height, width, channel = save_img.shape
@@ -37,26 +37,23 @@ def generate_image(label_file_path, img, nms_detect_list):
 def main():
     with tf.Session() as sess:
         image = tf.placeholder(tf.float32, [1, cfg.image_size_width, cfg.image_size_height, 3])
-        label = tf.placeholder(tf.float32, [1, cfg.object_class_num])
         feature = tf.placeholder(tf.float32, [1, 4096])
-        finetune_label = tf.placeholder(tf.float32, [1, cfg.object_class_num + 1])
-        bbox = tf.placeholder(tf.float32, [1, 4])
 
         model = do.load_model(sys.argv[1])
         mean = do.load_mean(sys.argv[2])
         alexnet_model = an.AlexNet(model, mean, False)
         with tf.name_scope('alexnet_content'):
-            alexnet_model.build(image, label)
+            alexnet_model.build(image)
 
         model = do.load_model(sys.argv[3])
         svm_model = svm.LinearSVM(model, False)
         with tf.name_scope('svm_content'):
-            svm_model.build(feature, finetune_label)
+            svm_model.build(feature)
 
         model = do.load_model(sys.argv[4])
         bbox_model = bbr.BBoxRegression(model, False)
         with tf.name_scope('bbox_content'):
-            bbox_model.build(feature, bbox)
+            bbox_model.build(feature)
 
         sess.run(tf.global_variables_initializer())
 
@@ -73,7 +70,7 @@ def main():
             region_prob = sess.run(svm_model.svm1, feed_dict=feed_dict)
             region_bbox = sess.run(bbox_model.bbox1, feed_dict=feed_dict)
 
-            label = tf.argmax(region_prob[0])
+            label = np.argmax(region_prob[0])
             if label != cfg.object_class_num:
                 region_width = region.rect.right - region.rect.left
                 region_hegith = region.rect.bottom - region.rect.top

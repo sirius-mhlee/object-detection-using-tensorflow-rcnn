@@ -10,7 +10,7 @@ class AlexNet:
         self.var_dict = {}
         self.trainable = trainable
 
-    def build(self, img_holder, label_holder):
+    def build(self, img_holder, label_holder=None):
         b, g, r = tf.split(axis=3, num_or_size_splits=3, value=img_holder)
         bgr = tf.concat(axis=3, values=[b - self.mean[0], g - self.mean[1], r - self.mean[2]])
 
@@ -43,26 +43,28 @@ class AlexNet:
 
         self.prob = tf.nn.softmax(self.fc8, name='prob')
 
-        self.loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.fc8, labels=label_holder)
-        self.loss_mean = tf.reduce_mean(self.loss)
-        self.optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(self.loss_mean)
+        if self.trainable:
+            self.loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.fc8, labels=label_holder)
+            self.loss_mean = tf.reduce_mean(self.loss)
+            self.optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(self.loss_mean)
 
-        self.correct_prediction = tf.equal(tf.argmax(self.fc8, 1), tf.argmax(label_holder, 1))
-        self.accuracy_mean = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
+            self.correct_prediction = tf.equal(tf.argmax(self.fc8, 1), tf.argmax(label_holder, 1))
+            self.accuracy_mean = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
 
         self.model = None
 
-    def build_finetune(self, label_holder):
+    def build_finetune(self, label_holder=None):
         self.finetune_fc8 = self.fc_layer(self.relu7, 4096, cfg.object_class_num + 1, 'finetune_fc8')
 
         self.finetune_prob = tf.nn.softmax(self.finetune_fc8, name='finetune_prob')
 
-        self.finetune_loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.finetune_fc8, labels=label_holder)
-        self.finetune_loss_mean = tf.reduce_mean(self.finetune_loss)
-        self.finetune_optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.0001).minimize(self.finetune_loss_mean)
+        if self.trainable:
+            self.finetune_loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.finetune_fc8, labels=label_holder)
+            self.finetune_loss_mean = tf.reduce_mean(self.finetune_loss)
+            self.finetune_optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.0001).minimize(self.finetune_loss_mean)
 
-        self.finetune_correct_prediction = tf.equal(tf.argmax(self.finetune_fc8, 1), tf.argmax(label_holder, 1))
-        self.finetune_accuracy_mean = tf.reduce_mean(tf.cast(self.finetune_correct_prediction, tf.float32))
+            self.finetune_correct_prediction = tf.equal(tf.argmax(self.finetune_fc8, 1), tf.argmax(label_holder, 1))
+            self.finetune_accuracy_mean = tf.reduce_mean(tf.cast(self.finetune_correct_prediction, tf.float32))
 
     def get_var(self, initial_value, name, idx, var_name):
         if self.model is not None and name in self.model:
