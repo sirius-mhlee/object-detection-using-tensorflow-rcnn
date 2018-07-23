@@ -1,7 +1,8 @@
 Object Detection using Tensorflow R-CNN
 ===========================================
 
-Tensorflow implementation of Regions with Convolutional Neural Networks Features..
+Tensorflow implementation of Regions with Convolutional Neural Networks Features.
+
 http://www.rossgirshick.info/
 	
 	Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation
