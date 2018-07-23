@@ -89,9 +89,6 @@ def main():
 
                 detect_list.append((label, region_prob[0][label], bbox_left, bbox_top, bbox_right, bbox_bottom))
 
-        print('===== detect_list =====')
-        print(detect_list)
-
         nms_detect_list = []
         for i in range(len(detect_list)):
             check_suppression = False
@@ -107,9 +104,6 @@ def main():
 
             if not check_suppression:
                 nms_detect_list.append(detect_list[i])
-
-        print('===== nms_detect_list =====')
-        print(nms_detect_list)
 
         save_img = generate_image(sys.argv[5], img, nms_detect_list)
         cv2.imwrite(sys.argv[7], save_img)
