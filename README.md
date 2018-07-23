@@ -3,9 +3,6 @@ Object Detection using Tensorflow R-CNN
 
 Tensorflow implementation of Regions with Convolutional Neural Networks Features.
 http://www.rossgirshick.info/
-
-Tensorflow implementation of Regions with Convolutional Neural Networks Features.
-http://www.rossgirshick.info/
 	
 	Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation
 	R. Girshick, J. Donahue, T. Darrell, J. Malik
@@ -29,12 +26,12 @@ Training Result
 Detection Usage
 -----
 
-    python DetectionImage.py cnn_model_file cnn_mean_file svm_model_file reg_model_file
-    	label_file input_image_file output_image_file
+    python DetectionImage.py cnn_model_file cnn_mean_file svm_model_file
+    	reg_model_file label_file input_image_file output_image_file
     
     ex)
-    python DetectionImage.py ./alexnet/alexnet_model.npy ./alexnet/alexnet_mean.txt ./svm/svm_model.npy ./bbox/bbox_model.npy
-    	./alexnet/flower_classes.txt ./example/tulip.jpg ./example/tulip_result.jpg
+    python DetectionImage.py ./alexnet/alexnet_model.npy ./alexnet/alexnet_mean.txt ./svm/svm_model.npy
+    	./bbox/bbox_model.npy ./alexnet/flower_classes.txt ./example/tulip.jpg ./example/tulip_result.jpg
 
 Detection Result
 -----
