@@ -1,60 +1,6 @@
-./data/image_0561.jpg 1 90,126,350,434
-./data/image_0562.jpg 1 160,15,340,415
-./data/image_0563.jpg 1 42,25,408,405
-./data/image_0564.jpg 1 66,48,384,318
-./data/image_0565.jpg 1 17,208,363,354
-./data/image_0566.jpg 1 42,20,398,310
-./data/image_0567.jpg 1 40,60,410,290
-./data/image_0568.jpg 1 40,60,360,380
-./data/image_0573.jpg 1 140,80,360,360
-./data/image_0574.jpg 1 50,80,360,360
-./data/image_0575.jpg 1 140,80,400,350
-./data/image_0576.jpg 1 140,80,400,350
-./data/image_0577.jpg 1 100,200,400,200
-./data/image_0578.jpg 1 200,100,380,160
-./data/image_0579.jpg 1 20,180,520,180
-./data/image_0580.jpg 1 20,10,420,450
-./data/image_0581.jpg 1 60,100,400,300
-./data/image_0582.jpg 1 152,35,398,435
-./data/image_0583.jpg 1 40,45,380,315
-./data/image_0584.jpg 1 40,45,410,395
-./data/image_0608.jpg 1 200,40,200,250
-./data/image_0610.jpg 1 180,105,300,300
-./data/image_0613.jpg 1 180,105,150,150
-./data/image_0617.jpg 1 70,120,210,280
-./data/image_0627.jpg 1 90,80,230,150
-./data/image_0630.jpg 1 270,140,165,108
-./data/image_0633.jpg 1 140,200,120,120
-./data/image_0634.jpg 1 220,180,220,150
-./data/image_0636.jpg 1 220,88,200,232
-./data/image_0637.jpg 1 290,42,110,158
-./data/image_1281.jpg 0 90,66,330,374
-./data/image_1282.jpg 0 90,35,330,425
-./data/image_1283.jpg 0 90,45,316,435
-./data/image_1284.jpg 0 26,16,408,574
-./data/image_1285.jpg 0 50,55,375,420
-./data/image_1286.jpg 0 40,63,347,487
-./data/image_1287.jpg 0 60,80,340,360
-./data/image_1288.jpg 0 34,27,403,535
-./data/image_1289.jpg 0 40,60,360,380
-./data/image_1290.jpg 0 36,5,399,525
-./data/image_1291.jpg 0 40,105,298,371
-./data/image_1292.jpg 0 40,60,362,460
-./data/image_1293.jpg 0 40,20,394,512
-./data/image_1294.jpg 0 84,30,329,470
-./data/image_1295.jpg 0 93,92,330,420
-./data/image_1296.jpg 0 64,250,379,466
-./data/image_1297.jpg 0 106,40,277,392
-./data/image_1298.jpg 0 72,60,348,540
-./data/image_1305.jpg 0 50,17,350,543
-./data/image_1306.jpg 0 103,100,308,379
-./data/image_1307.jpg 0 27,28,403,572
-./data/image_1314.jpg 0 30,14,420,516
-./data/image_1315.jpg 0 38,80,332,426
-./data/image_1316.jpg 0 72,32,354,568
-./data/image_1317.jpg 0 86,70,264,421
-./data/image_1318.jpg 0 95,110,285,430
-./data/image_1319.jpg 0 111,50,273,405
-./data/image_1323.jpg 0 16,122,465,502
-./data/image_1324.jpg 0 40,60,380,440
-./data/image_1325.jpg 0 114,37,242,356
+./data/image_0561.jpg 1 90 126 350 434
+./data/image_0562.jpg 1 160 15 340 415
+./data/image_0563.jpg 1 42 25 408 405
+./data/image_1281.jpg 0 90 66 330 374
+./data/image_1282.jpg 0 90 35 330 425
+./data/image_1283.jpg 0 90 45 316 435
