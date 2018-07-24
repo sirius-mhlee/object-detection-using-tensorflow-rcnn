@@ -1,6 +1,1 @@
 ./data/image_0561.jpg 1 90 126 350 434
-./data/image_0562.jpg 1 160 15 340 415
-./data/image_0563.jpg 1 42 25 408 405
-./data/image_1281.jpg 0 90 66 330 374
-./data/image_1282.jpg 0 90 35 330 425
-./data/image_1283.jpg 0 90 45 316 435
