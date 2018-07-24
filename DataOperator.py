@@ -51,14 +51,18 @@ def load_region_image(img_path, left, top, right, bottom):
     return expand_np_img
 
 def get_intersection_over_union(box1, box2):
-    area_box1 = (box1[2] - box1[0]) * (box1[3] - box1[2])
-    area_box2 = (box2[2] - box2[0]) * (box2[3] - box2[2])
+    area_box1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
+    area_box2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
 
     x1 = max(box1[0], box2[0])
     y1 = max(box1[1], box2[1])
     x2 = min(box1[2], box2[2])
     y2 = min(box1[3], box2[3])
-    area_intersection = (x2 - x1) * (y2 - y1)
+
+    inter_width = max(0, x2 - x1)
+    inter_height = max(0, y2 - y1)
+
+    area_intersection = inter_width * inter_height
     area_union = area_box1 + area_box2 - area_intersection
 
     iou = area_intersection / area_union
@@ -110,7 +114,7 @@ def load_alexnet_finetune_data(train_data_path):
         ground_truth_label = int(split_line[1])
         ground_truth_bbox = (int(split_line[2]), int(split_line[3]), int(split_line[2]) + int(split_line[4]), int(split_line[3]) + int(split_line[5]))
 
-        proposal = ss.selective_search_image(0.5, 500, 50, 20000, 30000, 1.25, img)
+        proposal = ss.selective_search_image(cfg.sigma, cfg.k, cfg.min_size, cfg.smallest, cfg.largest, cfg.distortion, img)
         for region in proposal:
             label = ground_truth_label
             region_bbox = (region.rect.left, region.rect.top, region.rect.right, region.rect.bottom)
@@ -150,7 +154,7 @@ def load_svm_train_data(train_data_path):
         ground_truth_label = int(split_line[1])
         ground_truth_bbox = (int(split_line[2]), int(split_line[3]), int(split_line[2]) + int(split_line[4]), int(split_line[3]) + int(split_line[5]))
 
-        proposal = ss.selective_search_image(0.5, 500, 50, 20000, 30000, 1.25, img)
+        proposal = ss.selective_search_image(cfg.sigma, cfg.k, cfg.min_size, cfg.smallest, cfg.largest, cfg.distortion, img)
         for region in proposal:
             label = ground_truth_label
             region_bbox = (region.rect.left, region.rect.top, region.rect.right, region.rect.bottom)
@@ -190,12 +194,12 @@ def load_bbox_train_data(train_data_path):
         ground_truth_label = int(split_line[1])
         ground_truth_bbox = (int(split_line[2]), int(split_line[3]), int(split_line[2]) + int(split_line[4]), int(split_line[3]) + int(split_line[5]))
 
-        proposal = ss.selective_search_image(0.5, 500, 50, 20000, 30000, 1.25, img)
+        proposal = ss.selective_search_image(cfg.sigma, cfg.k, cfg.min_size, cfg.smallest, cfg.largest, cfg.distortion, img)
         for region in proposal:
             label = ground_truth_label
             region_bbox = (region.rect.left, region.rect.top, region.rect.right, region.rect.bottom)
             iou = get_intersection_over_union(region_bbox, ground_truth_bbox)
-            if iou >= 0.6:
+            if iou > 0.4:
                 train_data.append((split_line[0], ground_truth_bbox[0], ground_truth_bbox[1], ground_truth_bbox[2], ground_truth_bbox[3], region_bbox[0], region_bbox[1], region_bbox[2], region_bbox[3]))
     train_file.close()
 

@@ -1,5 +1,6 @@
 import sys
 import cv2
+import random as rand
 
 import numpy as np
 import tensorflow as tf
@@ -19,18 +20,22 @@ def generate_image(label_file_path, img, nms_detect_list):
     label_file.close()
 
     random_color = lambda: (int(rand.random() * 255), int(rand.random() * 255), int(rand.random() * 255))
-    color = [random_color() for i in range(len(nms_detect_list))]
+    color = [random_color() for i in range(len(synset))]
 
     save_img = img.copy()
     height, width, channel = save_img.shape
 
     for detect in nms_detect_list:
-        left = max(detect[2], 0)
-        top = max(detect[3], 0)
-        right = min(detect[4], width)
-        bottom = min(detect[5], height)
+        left = int(max(detect[2], 0))
+        top = int(max(detect[3], 0))
+        right = int(min(detect[4], width))
+        bottom = int(min(detect[5], height))
+
         cv2.rectangle(save_img, (left, top), (right, bottom), color[detect[0]], 2)
-        cv2.putText(save_img, synset[detect[0]], (left + 20, top + 40), cv2.FONT_HERSHEY_SIMPLEX, 2, color[detect[0]], 2)
+
+        text_size, baseline = cv2.getTextSize(synset[detect[0]], cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
+        cv2.rectangle(save_img, (left, top - text_size[1] - baseline), (left + text_size[0], top), color[detect[0]], -1)
+        cv2.putText(save_img, synset[detect[0]], (left, top - baseline), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
     return save_img
 
@@ -59,15 +64,16 @@ def main():
 
         detect_list = []
         img = cv2.imread(sys.argv[6])
-        proposal = ss.selective_search_image(0.5, 500, 50, 20000, 30000, 1.25, img)
+        proposal = ss.selective_search_image(cfg.sigma, cfg.k, cfg.min_size, cfg.smallest, cfg.largest, cfg.distortion, img)
         for region in proposal:
             region_img = do.load_region_image(sys.argv[6], region.rect.left, region.rect.top, region.rect.right, region.rect.bottom)
             
             feed_dict = {image:region_img}
-            region_feature = sess.run(alexnet_model.fc7, feed_dict=feed_dict)
+            region_feature_fc, region_feature_tanh = sess.run([alexnet_model.fc7, alexnet_model.tanh7], feed_dict=feed_dict)
 
-            feed_dict = {feature:region_feature}
+            feed_dict = {feature:region_feature_fc}
             region_prob = sess.run(svm_model.svm1, feed_dict=feed_dict)
+            feed_dict = {feature:region_feature_tanh}
             region_bbox = sess.run(bbox_model.bbox1, feed_dict=feed_dict)
 
             label = np.argmax(region_prob[0])

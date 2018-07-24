@@ -35,6 +35,7 @@ class AlexNet:
 
         self.fc7 = self.fc_layer(self.relu6, 4096, 4096, 'fc7')
         self.relu7 = tf.nn.relu(self.fc7)
+        self.tanh7 = tf.nn.tanh(self.fc7)
 
         if self.trainable:
             self.relu7 = tf.nn.dropout(self.relu7, 0.5)

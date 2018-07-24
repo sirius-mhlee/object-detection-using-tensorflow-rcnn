@@ -113,7 +113,7 @@ def main():
             for batch_idx in range(bbox_train_size // batch_size):
                 batch_image, batch_bbox = do.get_bbox_train_batch_data(sess, bbox_train_data, batch_size)
                 batch_feature_feed_dict = {image:batch_image}
-                batch_feature = sess.run(alexnet_model.fc7, feed_dict=batch_feature_feed_dict)
+                batch_feature = sess.run(alexnet_model.tanh7, feed_dict=batch_feature_feed_dict)
                 feed_dict = {feature:batch_feature, bbox:batch_bbox}
 
                 _, loss_mean_value = sess.run([bbox_model.optimizer, bbox_model.loss_mean], feed_dict=feed_dict)
