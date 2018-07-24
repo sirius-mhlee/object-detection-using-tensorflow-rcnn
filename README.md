@@ -36,4 +36,4 @@ Detection Usage
 Detection Result
 -----
 
-![tulip.jpg](./example/tulip.jpg) ![tulip_result.jpg](./example/tulip_result.jpg)
+![tulip.jpg|500x750, 50%](./example/tulip.jpg) ![tulip_result.jpg|500x750, 50%](./example/tulip_result.jpg)
