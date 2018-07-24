@@ -36,5 +36,4 @@ Detection Usage
 Detection Result
 -----
 
-![tulip.jpg](./example/tulip.jpg)<img src="./example/tulip.jpg" width="35%" height="35%">
-![tulip_result.jpg|500x750, 50%](./example/tulip_result.jpg)<img src="./example/tulip_result.jpg" width="35%" height="35%">
+<img src="./example/tulip.jpg" width="35%" height="35%"> <img src="./example/tulip_result.jpg" width="35%" height="35%">
