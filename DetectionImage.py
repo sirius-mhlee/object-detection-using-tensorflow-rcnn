@@ -33,9 +33,9 @@ def generate_image(label_file_path, img, nms_detect_list):
 
         cv2.rectangle(save_img, (left, top), (right, bottom), color[detect[0]], 2)
 
-        text_size, baseline = cv2.getTextSize(synset[detect[0]], cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
-        cv2.rectangle(save_img, (left, top - text_size[1] - baseline), (left + text_size[0], top), color[detect[0]], -1)
-        cv2.putText(save_img, synset[detect[0]], (left, top - baseline), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+        text_size, baseline = cv2.getTextSize(' ' + synset[detect[0]] + ' ', cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
+        cv2.rectangle(save_img, (left, top - text_size[1] - (baseline * 2)), (left + text_size[0], top), color[detect[0]], -1)
+        cv2.putText(save_img, ' ' + synset[detect[0]] + ' ', (left, top - baseline), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
     return save_img
 
