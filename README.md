@@ -2,7 +2,9 @@ Object Detection using Tensorflow R-CNN
 ===========================================
 
 Tensorflow implementation of Regions with Convolutional Neural Networks Features.
-http://www.rossgirshick.info/
+http://www.rossgirshick.info/  
+Using 17 Category Flower Dataset.
+http://www.robots.ox.ac.uk/~vgg/data/flowers/17/
 	
 	Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation
 	R. Girshick, J. Donahue, T. Darrell, J. Malik
@@ -36,4 +38,4 @@ Detection Usage
 Detection Result
 -----
 
-<img src="./example/tulip.jpg" width="35%" height="35%"> <img src="./example/tulip_result.jpg" width="35%" height="35%">
+<img src="./example/tulip.jpg" width="45%" height="45%"> <img src="./example/tulip_result.jpg" width="45%" height="45%">
