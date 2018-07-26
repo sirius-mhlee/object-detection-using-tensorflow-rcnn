@@ -1,5 +1,6 @@
 import sys
 import cv2
+import os
 import random as rand
 
 import numpy as np
@@ -55,10 +56,14 @@ def main():
         with tf.name_scope('svm_content'):
             svm_model.build(feature)
 
-        model = do.load_model(sys.argv[4])
-        bbox_model = bbr.BBoxRegression(model, False)
-        with tf.name_scope('bbox_content'):
-            bbox_model.build(feature)
+        bbox_model_list = []
+        for bbox_model_idx in range(cfg.object_class_num):
+            bbox_model_filename, bbox_model_fileext = os.path.splitext(sys.argv[4])
+            model = do.load_model(bbox_model_filename + '_{0}'.format(bbox_model_idx) + bbox_model_fileext)
+            bbox_model = bbr.BBoxRegression(model, False)
+            with tf.name_scope('bbox_content'):
+                bbox_model.build(feature)
+            bbox_model_list.append(bbox_model)
 
         sess.run(tf.global_variables_initializer())
 
@@ -73,11 +78,12 @@ def main():
 
             feed_dict = {feature:region_feature_fc}
             region_prob = sess.run(svm_model.svm1, feed_dict=feed_dict)
-            feed_dict = {feature:region_feature_tanh}
-            region_bbox = sess.run(bbox_model.bbox1, feed_dict=feed_dict)
 
             label = np.argmax(region_prob[0])
             if label != cfg.object_class_num:
+                feed_dict = {feature:region_feature_tanh}
+                region_bbox = sess.run(bbox_model_list[label].bbox1, feed_dict=feed_dict)
+
                 region_width = region.rect.right - region.rect.left
                 region_hegith = region.rect.bottom - region.rect.top
                 region_center_x = region.rect.left + region_width / 2

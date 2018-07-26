@@ -1,5 +1,6 @@
 import sys
 import cv2
+import os
 
 import numpy as np
 import tensorflow as tf
@@ -51,9 +52,12 @@ def main():
         with tf.name_scope('svm_content'):
             svm_model.build(feature, finetune_label)
 
-        bbox_model = bbr.BBoxRegression(None, True)
-        with tf.name_scope('bbox_content'):
-            bbox_model.build(feature, bbox)
+        bbox_model_list = []
+        for bbox_model_idx in range(cfg.object_class_num):
+            bbox_model = bbr.BBoxRegression(None, True)
+            with tf.name_scope('bbox_content_{0}'.format(bbox_model_idx)):
+                bbox_model.build(feature, bbox)
+            bbox_model_list.append(bbox_model)
 
         writer = tf.summary.FileWriter('./log/', sess.graph)
 
@@ -111,18 +115,25 @@ def main():
         print('Training BBox Regression')
         for epoch_idx in range(max_epoch):
             for batch_idx in range(bbox_train_size // batch_size):
-                batch_image, batch_bbox = do.get_bbox_train_batch_data(sess, bbox_train_data, batch_size)
-                batch_feature_feed_dict = {image:batch_image}
-                batch_feature = sess.run(alexnet_model.tanh7, feed_dict=batch_feature_feed_dict)
-                feed_dict = {feature:batch_feature, bbox:batch_bbox}
+                batch_image, batch_label, batch_bbox = do.get_bbox_train_batch_data(sess, bbox_train_data, batch_size)
+                for batch_data_idx in range(batch_size):
+                    batch_data_image = np.expand_dims(batch_image[batch_data_idx], axis=0)
+                    batch_data_bbox = np.expand_dims(batch_bbox[batch_data_idx], axis=0)
 
-                _, loss_mean_value = sess.run([bbox_model.optimizer, bbox_model.loss_mean], feed_dict=feed_dict)
-                print_batch_info(epoch_idx, batch_idx, loss_mean_value)
+                    batch_feature_feed_dict = {image:batch_data_image}
+                    batch_feature = sess.run(alexnet_model.tanh7, feed_dict=batch_feature_feed_dict)
+                    feed_dict = {feature:batch_feature, bbox:batch_data_bbox}
+
+                    bbox_model_idx = batch_label[batch_data_idx]
+                    _, loss_mean_value = sess.run([bbox_model_list[bbox_model_idx].optimizer, bbox_model_list[bbox_model_idx].loss_mean], feed_dict=feed_dict)
+                    print_batch_info(epoch_idx, batch_idx, loss_mean_value)
 
         do.save_model(sess, alexnet_model.var_dict, sys.argv[5])
         do.save_mean(alexnet_model.mean, sys.argv[6])
         do.save_model(sess, svm_model.var_dict, sys.argv[7])
-        do.save_model(sess, bbox_model.var_dict, sys.argv[8])
+        for bbox_model_idx in range(len(bbox_model_list)):
+            bbox_model_filename, bbox_model_fileext = os.path.splitext(sys.argv[8])
+            do.save_model(sess, bbox_model_list[bbox_model_idx].var_dict, bbox_model_filename + '_{0}'.format(bbox_model_idx) + bbox_model_fileext)
 
 if __name__ == '__main__':
     main()

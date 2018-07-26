@@ -200,7 +200,7 @@ def load_bbox_train_data(train_data_path):
             region_bbox = (region.rect.left, region.rect.top, region.rect.right, region.rect.bottom)
             iou = get_intersection_over_union(region_bbox, ground_truth_bbox)
             if iou > 0.4:
-                train_data.append((split_line[0], ground_truth_bbox[0], ground_truth_bbox[1], ground_truth_bbox[2], ground_truth_bbox[3], region_bbox[0], region_bbox[1], region_bbox[2], region_bbox[3]))
+                train_data.append((split_line[0], label, ground_truth_bbox[0], ground_truth_bbox[1], ground_truth_bbox[2], ground_truth_bbox[3], region_bbox[0], region_bbox[1], region_bbox[2], region_bbox[3]))
     train_file.close()
 
     return train_data
@@ -209,21 +209,23 @@ def get_bbox_train_batch_data(sess, train_data, batch_size):
     rand.shuffle(train_data)
     
     image = []
+    label = []
     bbox = []
 
     batch_data = train_data[:batch_size]
     for data in batch_data:
-        image.append(load_region_image(data[0], data[5], data[6], data[7], data[8]))
+        image.append(load_region_image(data[0], data[6], data[7], data[8], data[9]))
+        label.append(data[1])
 
-        region_width = data[7] - data[5]
-        region_hegith = data[8] - data[6]
-        region_center_x = data[5] + region_width / 2
-        region_center_y = data[6] + region_hegith / 2
+        region_width = data[8] - data[6]
+        region_hegith = data[9] - data[7]
+        region_center_x = data[6] + region_width / 2
+        region_center_y = data[7] + region_hegith / 2
 
-        ground_truth_width = data[3] - data[1]
-        ground_truth_height = data[4] - data[2]
-        ground_truth_center_x = data[1] + ground_truth_width / 2
-        ground_truth_center_y = data[2] + ground_truth_height / 2
+        ground_truth_width = data[4] - data[2]
+        ground_truth_height = data[5] - data[3]
+        ground_truth_center_x = data[2] + ground_truth_width / 2
+        ground_truth_center_y = data[3] + ground_truth_height / 2
 
         target_x = (ground_truth_center_x - region_center_x) / region_width
         target_y = (ground_truth_center_y - region_center_y) / region_hegith
@@ -233,7 +235,8 @@ def get_bbox_train_batch_data(sess, train_data, batch_size):
         bbox.append((target_x, target_y, target_width, target_height))
 
     batch_image = np.concatenate(image)
+    batch_label = label
     batch_bbox_op = tf.convert_to_tensor(bbox, dtype=tf.float32)
     batch_bbox = sess.run(batch_bbox_op)
 
-    return batch_image, batch_bbox
+    return batch_image, batch_label, batch_bbox
