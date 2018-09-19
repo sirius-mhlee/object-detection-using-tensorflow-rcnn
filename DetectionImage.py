@@ -112,7 +112,7 @@ def main():
                     if iou > 0.3:
                         if detect_list[j][1] > detect_list[i][1]:
                             check_suppression = True
-                            break;
+                            break
 
             if not check_suppression:
                 nms_detect_list.append(detect_list[i])
